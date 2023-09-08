@@ -1,0 +1,63 @@
+{
+  "pessoas": [
+    {
+      "id": 1,
+      "nome": "Admin",
+      "cpf": "000.000.000-00",
+      "dataNascimento": "2000-10-22"
+    }
+  ],
+  "produtos": [
+    {
+      "id": "508a13be-3089-4f7d-be6c-5ee0c2fd65123",
+      "descricao": "Calabresa",
+      "type": "Carne",
+      "valoUnitario": 13
+    },
+    {
+      "id": "508a13be-3089-4f7d-be6c-544112fd65123",
+      "descricao": "Portuguesa",
+      "type": "Carne",
+      "valoUnitario": 12
+    },
+    {
+      "id": "ff5d5030-35f6-45fc-8580-f5bf4e95a1a9",
+      "descricao": "Calabresa",
+      "type": "Carne",
+      "valoUnitario": 12
+    }
+  ],
+  "pedidos": [
+    {
+      "id": 1,
+      "cliente": {
+        "id": 1,
+        "nome": "cliente 1"
+      },
+      "dataEmissao": "2019-01-01",
+      "valorTotal": 76.64,
+      "itens": [
+        {
+          "id": 1,
+          "produto": {
+            "id": 1,
+            "descricao": "produto 1"
+          },
+          "valor": 10,
+          "quantidade": 5,
+          "subtotal": 50
+        },
+        {
+          "id": 2,
+          "produto": {
+            "id": 2,
+            "descricao": "produto 2"
+          },
+          "valor": 8.88,
+          "quantidade": 3,
+          "subtotal": 26.64
+        }
+      ]
+    }
+  ]
+}

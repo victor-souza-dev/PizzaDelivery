@@ -1,0 +1,68 @@
+.header {
+  height: 115px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  img {
+    cursor: pointer;
+  }
+
+  section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+}
+
+.logo {
+  width: 114px;
+  height: 51px;
+}
+
+.button {
+  height: 38px;
+  padding: 8px;
+  border-radius: 6px;
+  border-color: transparent;
+  transition: filter 0.2s;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+
+  img {
+    width: 15px;
+  }
+}
+
+.login {
+  background-color: #ebe5f9;
+  color: #4b2995;
+
+  img {
+    margin-right: 8px;
+  }
+}
+
+.cart {
+  margin-left: 12px;
+  background-color: #f1e9c9;
+  color: #c47f17;
+
+  img {
+    width: 18px;
+    padding-right: 2px;
+  }
+}
+.users {
+  margin-left: 12px;
+  background-color: #ffffff;
+  color: black;
+
+  img {
+    width: 18px;
+    padding-right: 2px;
+  }
+}

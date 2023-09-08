@@ -1,0 +1,107 @@
+.card-container {
+  width: 230px;
+  height: 292px;
+  background-color: #f3f2f2;
+  border-radius: 6px 36px 6px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+}
+
+.card-header {
+  font-weight: 700;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  position: relative;
+  top: -50px;
+
+  img {
+    width: 144.22px;
+    height: 146px;
+  }
+
+  div {
+    display: flex;
+    justify-content: center;
+
+    p {
+      width: fit-content;
+      text-align: center;
+      font-size: 12px;
+      line-height: 13px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      background-color: #f1e9c9;
+      color: #c47f17;
+    }
+  }
+
+  h2 {
+    margin-top: 5px;
+    font-size: 20px;
+    line-height: 26px;
+    text-align: center;
+  }
+}
+
+.card-footer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+  span:first-child {
+    text-align: center;
+    color: #574f4d;
+    line-height: 31.2px;
+
+    strong {
+      font-size: 24px;
+    }
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+  }
+}
+.card-counter {
+  width: 72px;
+  height: 38px;
+  background-color: #e6e5e5;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  button {
+    background: none;
+    border: none;
+    color: #2ea80fc7;
+    font-size: 20px;
+    padding-bottom: 3px;
+  }
+}
+.card-addCart {
+  height: 38px;
+  padding: 8px;
+  border-radius: 6px;
+  border-color: transparent;
+  transition: filter 0.2s;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 12px;
+  background-color: #2ea80fc7;
+
+  img {
+    width: 18px;
+    padding-right: 2px;
+  }
+}

@@ -1,29 +1,59 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <NavbarComponent />
+  <nav v-if="isAuth" class="navbar">
+    <button @click="redirectTo(paths.users)">Usuários</button>
+    <button @click="redirectTo(paths.products)">Produtos</button>
   </nav>
   <router-view />
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import NavbarComponent from "@/components/Navbar/NavbarComponent.vue";
+import { defineComponent } from "vue";
+import "@/styles/global.scss";
+import router from "./router";
+import { paths } from "./controllers/paths";
+import store from "./store";
 
-nav {
-  padding: 30px;
+export default defineComponent({
+  components: {
+    NavbarComponent,
+  },
+  setup() {
+    store.commit("initialize");
+    const isAuth = store.state.auth.isAuthenticated;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+    function redirectTo(path: string) {
+      router.push(path);
+    }
+    return { redirectTo, paths, isAuth };
+  },
+});
+</script>
 
-    &.router-link-exact-active {
-      color: #42b983;
+<style lang="scss" scoped>
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  button {
+    height: 38px;
+    padding: 8px;
+    border-radius: 6px;
+    border-color: transparent;
+    transition: filter 0.2s;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    margin-left: 12px;
+    background-color: white;
+    color: black;
+    &:hover {
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
     }
   }
 }

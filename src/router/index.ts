@@ -1,25 +1,51 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import { authGuard } from "@/guards/authGuard";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "home",
-    component: HomeView,
+    name: "Home",
+    component: () => import("../views/HomeView.vue"),
   },
   {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    path: "/cart",
+    name: "CartView",
+    component: () => import("../views/CartView.vue"),
+    beforeEnter: authGuard,
+  },
+  {
+    path: "/success",
+    name: "SuccessView",
+    component: () => import("../views/SuccessView.vue"),
+    beforeEnter: authGuard,
+  },
+  {
+    path: "/users",
+    name: "UsersView",
+    component: () => import("../views/UsersView.vue"),
+    // beforeEnter: authGuard,
+  },
+  {
+    path: "/products",
+    name: "ProductsView",
+    component: () => import("../views/ProductsView.vue"),
+    beforeEnter: authGuard,
+  },
+  {
+    path: "/registerUser",
+    name: "RegisterUserView",
+    component: () => import("../views/RegisterUserView.vue"),
+  },
+  {
+    path: "/registerProduct",
+    name: "RegisterProductView",
+    component: () => import("../views/RegisterProductView.vue"),
+    beforeEnter: authGuard,
   },
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 
