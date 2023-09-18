@@ -4,6 +4,11 @@
 
 - Certifique-se de ter o NodeJS instalado: https://nodejs.org/pt-br
 
+- Instale Globalmente o json-server:
+```
+npm i -g json-server
+```
+
 - Execute o comando a seguir para iniciar json-server
 ```
 json-server ./back/data.json
