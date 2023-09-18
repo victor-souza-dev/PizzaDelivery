@@ -9,7 +9,7 @@
 npm i -g json-server
 ```
 
-- Execute o comando a seguir para iniciar json-server
+- Execute o comando a seguir para iniciar o back
 ```
 json-server ./back/data.json
 ```
