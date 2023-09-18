@@ -3,26 +3,26 @@ import { paths } from "@/controllers/paths";
 import { usersLogin } from "@/queries/Users/usersLogin";
 import router from "@/router";
 import store from "@/store";
-import { defineComponent, ref } from "vue";
+import { useForm } from "vee-validate";
+import { defineComponent } from "vue";
+import { dateInfo } from "../../utils/dateInfo";
 import "./modalComponent.scss";
+import { schemaModal } from "./schema";
 
 export default defineComponent({
   name: "ModalComponent",
   setup() {
-    const fields = ref({
-      cpf: "",
-      birthDate: "",
+    const {
+      format: { enUs },
+    } = dateInfo();
+
+    const { handleSubmit, errors, defineInputBinds, resetForm } = useForm({
+      validationSchema: schemaModal,
     });
 
-    const hasErrors = ref({
-      cpf: false,
-      birthDate: false,
-    });
+    const cpf = defineInputBinds("cpf");
+    const birthDate = defineInputBinds("birthDate");
 
-    function resetFields() {
-      fields.value.cpf = "";
-      fields.value.birthDate = "";
-    }
     function closeModal() {
       store.commit("toggleModal", false);
     }
@@ -32,36 +32,27 @@ export default defineComponent({
       closeModal();
     }
 
-    function handleSubmit(event: Event) {
-      event.preventDefault();
-      const cpfRegex = /^[0-9]{11}$/;
-
-      if (!cpfRegex.test(fields.value.cpf)) {
-        hasErrors.value.cpf = true;
-      } else {
-        hasErrors.value.cpf = false;
-      }
-
-      if (Object.values(hasErrors.value).every((value) => value === false)) {
-        usersLogin({
-          cpf: fields.value.cpf,
-          birthDate: fields.value.birthDate,
-        }).then((data) => {
-          store.commit("login", data);
-          resetFields();
-          closeModal();
-          window.location.reload();
-        });
-      }
-    }
+    const onSubmit = handleSubmit(({ cpf, birthDate }) => {
+      usersLogin({
+        cpf,
+        birthDate,
+      }).then((data) => {
+        store.commit("login", data);
+        resetForm();
+        closeModal();
+        window.location.reload();
+      });
+    });
 
     return {
       store,
       closeModal,
       redirectToRegisterUsers,
-      handleSubmit,
-      fields,
-      hasErrors,
+      onSubmit,
+      errors,
+      cpf,
+      birthDate,
+      enUs,
     };
   },
 });
@@ -80,20 +71,29 @@ export default defineComponent({
     <h1 class="modal-title">
       Sign in into <span>Pizza<span>Delivery</span></span>
     </h1>
-    <form class="modal-form" @submit="handleSubmit">
+    <form class="modal-form" @submit="onSubmit">
       <section class="modal-form--inputs">
-        <input type="text" v-model="fields.cpf" placeholder="CPF" required />
-        <span v-if="hasErrors.cpf" class="error-message">Campo inválido</span
-        ><input
-          type="date"
-          v-model="fields.birthDate"
-          placeholder="Data de Nascimento"
-          required
+        <input
+          name="cpf"
+          v-bind="cpf"
+          placeholder="CPF"
+          :class="{ 'invalid-input': errors.cpf }"
+          maxlength="14"
         />
-        <span v-if="hasErrors.birthDate" class="error-message"
-          >Campo inválido</span
-        >
-        <span class="modal-form--forgot">Forgot password?</span>
+        <span class="error-message">{{ errors.cpf }}</span>
+        <input
+          type="date"
+          name="birthDate"
+          v-bind="birthDate"
+          placeholder="Data de Nascimento"
+          :class="{ 'invalid-input': errors.birthDate }"
+          min="1950-01-01"
+          :max="enUs"
+        />
+        <span class="error-message">{{ errors.birthDate }}</span>
+        <div class="modal-form--forgot">
+          <span>Forgot password?</span>
+        </div>
       </section>
       <button type="submit">Sign in</button>
       <h4 class="modal-footerMessage">
@@ -104,3 +104,4 @@ export default defineComponent({
     </form>
   </div>
 </template>
+../../utils/dateInfo

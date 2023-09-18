@@ -13,8 +13,6 @@ export default defineComponent({
   setup(props) {
     const countItem = ref(0);
 
-    console.log(store.state.order);
-
     function insertToCart() {
       if (props.product && countItem.value > 0) {
         store.commit("setOrders", {
