@@ -1,10 +1,16 @@
 {
   "pessoas": [
     {
-      "id": 1,
-      "nome": "Admin",
-      "cpf": "000.000.000-00",
-      "dataNascimento": "2000-10-22"
+      "id": "59f2f182-8d98-4444-b809-397717703553",
+      "nome": "Klowdy",
+      "cpf": "00000000012",
+      "dataNascimento": "2023-09-14"
+    },
+    {
+      "id": "63566585-7b22-4802-bba9-7c4c3212fa07",
+      "nome": "Frederico",
+      "cpf": "00000000011",
+      "dataNascimento": "2000-10-20"
     }
   ],
   "produtos": [

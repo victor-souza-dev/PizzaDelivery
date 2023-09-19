@@ -1,22 +1,23 @@
 import { IUser } from "@/Interfaces/IUser";
-import { IUserAdapter, adapterToUser } from "@/adapters/userAdapter";
+import {
+  IUserAdapter,
+  adapterToUser,
+  userToAdapter,
+} from "@/adapters/userAdapter";
 import { backConnection } from "@/services/backConnection";
 
-export async function usersLogin(payload: Partial<IUser>) {
+export async function usersLogin(
+  payload: Partial<IUser>
+): Promise<Partial<IUser> | undefined> {
   const { data } = await backConnection.get("/pessoas");
 
-  if (data) {
-    return adapterToUser(
-      data.find((user: IUserAdapter) => {
-        if (
-          user.cpf === payload.cpf &&
-          user.dataNascimento === payload.birthDate
-        ) {
-          return user;
-        } else {
-          return false;
-        }
-      })
-    );
-  }
+  if (!data) return undefined;
+
+  const adapter = userToAdapter(payload as IUser) as IUserAdapter;
+  const user = data.find(
+    (user: IUserAdapter) =>
+      user.cpf === adapter.cpf && user.dataNascimento === adapter.dataNascimento
+  );
+
+  return user ? (adapterToUser(user) as Partial<IUser>) : undefined;
 }

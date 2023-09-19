@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/users",
     name: "UsersView",
     component: () => import("../views/UsersView.vue"),
-    // beforeEnter: authGuard,
+    beforeEnter: authGuard,
   },
   {
     path: "/products",

@@ -4,52 +4,53 @@ import { usersPost } from "@/queries/Users/usersPost";
 import router from "@/router";
 import store from "@/store";
 import { dateInfo } from "@/utils/dateInfo";
-import { useForm } from "vee-validate";
+import { ErrorMessage, Field, Form, SubmissionContext } from "vee-validate";
 import { defineComponent } from "vue";
 import "./registerUserComponent.scss";
 import { schemaRegisterUser } from "./schema";
 
+interface DataForm {
+  name: string;
+  birthDate: string;
+  cpf: string;
+}
+
+function registerRedirect() {
+  router.push(paths.home);
+  store.commit("toggleModal", true);
+}
+
 export default defineComponent({
   name: "RegisterUserComponent",
+  components: { ErrorMessage, Field, Form },
   setup() {
     const {
       format: { enUs },
     } = dateInfo();
 
-    const { handleSubmit, errors, defineInputBinds, resetForm } = useForm({
-      validationSchema: schemaRegisterUser,
-    });
+    const handleSubmit = (
+      { name, cpf, birthDate }: DataForm,
+      ctx: SubmissionContext
+    ) => {
+      try {
+        usersPost({
+          cpf,
+          birthDate,
+          name,
+        });
 
-    const cpf = defineInputBinds("cpf");
-    const birthDate = defineInputBinds("birthDate");
-    const name = defineInputBinds("name");
-
-    function register() {
-      router.push(paths.home);
-      store.commit("toggleModal", true);
-    }
-
-    const onSubmit = handleSubmit(({ cpf, birthDate, name }) => {
-      usersPost({
-        cpf,
-        birthDate,
-        name,
-      }).then((data) => {
-        store.commit("login", data);
-        resetForm();
-        register();
-      });
-    });
+        ctx.resetForm();
+        registerRedirect();
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
     return {
-      store,
-      register,
-      onSubmit,
-      errors,
-      name,
-      birthDate,
-      cpf,
+      registerRedirect,
+      handleSubmit,
       enUs,
+      schemaRegisterUser,
     };
   },
 });
@@ -60,35 +61,39 @@ export default defineComponent({
     <h1 class="registerClient-title">
       Sign up <span>Pizza<span>Delivery</span></span>
     </h1>
-    <form class="registerClient-form" @submit="onSubmit">
+    <Form
+      class="registerClient-form"
+      @submit="(values, ctx) => handleSubmit(values as DataForm, ctx)"
+      :validation-schema="schemaRegisterUser"
+      v-slot="{ errors }"
+    >
       <section class="registerClient-form--inputs">
-        <input
+        <Field
           type="text"
+          name="name"
           placeholder="Nome"
-          v-bind="name"
           minlength="1"
           maxlength="20"
           :class="{ 'invalid-input': errors.name }"
         />
-        <span class="error-message">{{ errors.name }}</span>
-        <input
+        <ErrorMessage name="name" class="error-message" />
+        <Field
+          type="text"
           name="cpf"
-          v-bind="cpf"
           placeholder="CPF"
           :class="{ 'invalid-input': errors.cpf }"
           maxlength="14"
         />
-        <span class="error-message">{{ errors.cpf }}</span>
-        <input
+        <ErrorMessage name="cpf" class="error-message" />
+        <Field
           type="date"
           name="birthDate"
-          v-bind="birthDate"
           placeholder="Data de Nascimento"
           :class="{ 'invalid-input': errors.birthDate }"
           min="1950-01-01"
           :max="enUs"
         />
-        <span class="error-message">{{ errors.birthDate }}</span>
+        <ErrorMessage name="birthDate" class="error-message" />
       </section>
       <button
         type="submit"
@@ -100,9 +105,9 @@ export default defineComponent({
       </button>
       <h4 class="registerClient-footerMessage">
         Você já tem uma conta?
-        <strong @click="register()">Login </strong>
+        <strong @click="registerRedirect()">Login </strong>
         <span>Pizza<span>Delivery</span></span>
       </h4>
-    </form>
+    </Form>
   </div>
 </template>

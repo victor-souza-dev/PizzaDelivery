@@ -4,9 +4,9 @@
   padding: 20px;
   position: fixed;
   z-index: 1000;
-  background-color: white;
   left: 30vw;
   top: 150px;
+  background-color: white;
   border-radius: 8px;
   box-shadow: 0px 12px 24px 0px #0000001a;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -84,12 +84,17 @@
   flex-direction: column;
   margin-bottom: 30px;
 
-  input {
+  .modal-form--input {
     height: 48px;
     border-radius: 4px;
     border: 2px solid #e0deea;
     padding-left: 20px;
     color: #696969;
+    margin-bottom: 10px;
+
+    &:first-child {
+      margin-bottom: 15px;
+    }
 
     &:focus {
       outline-color: #cacacf;
@@ -130,6 +135,7 @@
 .modal-form--forgot {
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 15px;
 
   span {
     cursor: pointer;

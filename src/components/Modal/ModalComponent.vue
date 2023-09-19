@@ -3,56 +3,50 @@ import { paths } from "@/controllers/paths";
 import { usersLogin } from "@/queries/Users/usersLogin";
 import router from "@/router";
 import store from "@/store";
-import { useForm } from "vee-validate";
+import { ErrorMessage, Field, Form, SubmissionContext } from "vee-validate";
 import { defineComponent } from "vue";
 import { dateInfo } from "../../utils/dateInfo";
 import "./modalComponent.scss";
 import { schemaModal } from "./schema";
 
+interface DataForm {
+  birthDate: string;
+  cpf: string;
+}
+
 export default defineComponent({
   name: "ModalComponent",
-  setup() {
+  components: { Form, Field, ErrorMessage },
+  methods: {
+    closeModal() {
+      store.commit("toggleModal", false);
+    },
+    redirectToRegisterUsers() {
+      router.push(paths.registerUser);
+      this.closeModal();
+    },
+    async handleSubmit({ cpf, birthDate }: DataForm, ctx: SubmissionContext) {
+      const data = await usersLogin({ cpf, birthDate });
+
+      if (data) {
+        store.commit("login", data);
+        this.closeModal();
+        ctx.resetForm();
+        window.location.reload();
+      } else {
+        alert("Usuário inválido!");
+      }
+    },
+  },
+  data() {
     const {
       format: { enUs },
     } = dateInfo();
 
-    const { handleSubmit, errors, defineInputBinds, resetForm } = useForm({
-      validationSchema: schemaModal,
-    });
-
-    const cpf = defineInputBinds("cpf");
-    const birthDate = defineInputBinds("birthDate");
-
-    function closeModal() {
-      store.commit("toggleModal", false);
-    }
-
-    function redirectToRegisterUsers() {
-      router.push(paths.registerUser);
-      closeModal();
-    }
-
-    const onSubmit = handleSubmit(({ cpf, birthDate }) => {
-      usersLogin({
-        cpf,
-        birthDate,
-      }).then((data) => {
-        store.commit("login", data);
-        resetForm();
-        closeModal();
-        window.location.reload();
-      });
-    });
-
     return {
       store,
-      closeModal,
-      redirectToRegisterUsers,
-      onSubmit,
-      errors,
-      cpf,
-      birthDate,
       enUs,
+      schemaModal,
     };
   },
 });
@@ -71,26 +65,31 @@ export default defineComponent({
     <h1 class="modal-title">
       Sign in into <span>Pizza<span>Delivery</span></span>
     </h1>
-    <form class="modal-form" @submit="onSubmit">
+    <Form
+      class="modal-form"
+      @submit="(values, ctx) => handleSubmit(values as DataForm, ctx)"
+      :validation-schema="schemaModal"
+      v-slot="{ errors }"
+    >
       <section class="modal-form--inputs">
-        <input
+        <Field
           name="cpf"
-          v-bind="cpf"
           placeholder="CPF"
+          class="modal-form--input"
           :class="{ 'invalid-input': errors.cpf }"
           maxlength="14"
         />
-        <span class="error-message">{{ errors.cpf }}</span>
-        <input
+        <ErrorMessage name="cpf" class="error-message" />
+        <Field
           type="date"
           name="birthDate"
-          v-bind="birthDate"
           placeholder="Data de Nascimento"
+          class="modal-form--input"
           :class="{ 'invalid-input': errors.birthDate }"
           min="1950-01-01"
           :max="enUs"
         />
-        <span class="error-message">{{ errors.birthDate }}</span>
+        <ErrorMessage name="birthDate" class="error-message" />
         <div class="modal-form--forgot">
           <span>Forgot password?</span>
         </div>
@@ -101,7 +100,6 @@ export default defineComponent({
         <strong @click="redirectToRegisterUsers">Sign up to </strong>
         <span>Pizza<span>Delivery</span></span>
       </h4>
-    </form>
+    </Form>
   </div>
 </template>
-../../utils/dateInfo

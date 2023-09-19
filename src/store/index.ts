@@ -84,12 +84,11 @@ export default createStore({
       } else {
         // Pedido não existe, crie um novo
         newOrder.items.push(payload);
-        newOrder.totalValue += parseFloat(payload.subtotal);
+        console.log(parseFloat(payload.subTotal));
+        newOrder.totalValue += parseFloat(payload.subTotal);
         const createOrder = [...state.order, newOrder];
         state.order = createOrder as never;
       }
-
-      console.log(state.order);
     },
     updateUser(state, updated) {
       const productIndex = state.users.findIndex(

@@ -7,6 +7,6 @@ export async function usersPost(payload: IUser): Promise<void> {
     await backConnection.post("pessoas", userToAdapter(payload));
     alert("Usuário cadastrado com sucesso");
   } catch (error) {
-    alert("Ocorreu um erro ao cadastrar o usuário");
+    throw new Error("Ocorreu um erro ao cadastrar o usuário");
   }
 }

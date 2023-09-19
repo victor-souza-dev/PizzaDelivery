@@ -3,6 +3,7 @@ import CardItemComponent from "@/components/CardItem/CardItemComponent.vue";
 import PresentationLayout from "@/layouts/PresentationLayout.vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { productsGetAll } from "@/queries/Products/productsGetAll";
+import store from "@/store";
 
 export default defineComponent({
   components: {
@@ -11,6 +12,8 @@ export default defineComponent({
   },
   setup() {
     const pizzas = ref([]);
+
+    // console.log(store.state.order);
 
     onMounted(async () => {
       pizzas.value = await productsGetAll();
