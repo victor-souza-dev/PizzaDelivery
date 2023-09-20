@@ -42,53 +42,53 @@ export default createStore({
       state.products = payload;
     },
     setOrders(state, payload) {
-      const newOrder: IOrder = {
-        id: v4(),
-        client: {
-          id: state.auth.user.id,
-          name: state.auth.user.name,
-        },
-        dateOfIssue: new Date().toISOString(),
-        totalValue: 0,
-        items: [],
-      };
+      const deserializedState: IOrder[] = JSON.parse(
+        JSON.stringify(state.order)
+      );
+      const ordersSetCopy = [...deserializedState];
 
-      const existingOrderIndex = state.order.findIndex(
-        (order: IOrder) => order.client.id === newOrder.client.id
+      const existingOrderIndex = ordersSetCopy.findIndex(
+        (order) => order.client.id === state.auth.user.id
       );
 
       if (existingOrderIndex !== -1) {
-        const existingOrder = state.order[existingOrderIndex];
-        // eslint-disable-next-line
-        // @ts-ignore
-        newOrder.items = [...existingOrder.items];
-
-        const existingItemIndex = newOrder.items.findIndex(
-          (item: IOrderItem) => item.product.id === payload.product.id
+        const existingOrder = ordersSetCopy[existingOrderIndex];
+        const existingItemIndex = existingOrder.items.findIndex(
+          (item) => item.product.id === payload.product.id
         );
 
         if (existingItemIndex !== -1) {
-          newOrder.items[existingItemIndex].quantity += payload.quantity;
-          newOrder.items[existingItemIndex].subTotal += parseFloat(
-            payload.subtotal
-          );
-          newOrder.totalValue += parseFloat(payload.subtotal);
+          const existingItem = existingOrder.items[existingItemIndex];
+          existingItem.quantity += payload.quantity;
+          existingItem.subTotal += parseFloat(payload.subTotal);
         } else {
-          newOrder.items.push(payload);
-          newOrder.totalValue += parseFloat(payload.subtotal);
+          existingOrder.items.push(payload);
+          existingOrder.totalValue += parseFloat(payload.subTotal);
         }
 
-        // eslint-disable-next-line
-        // @ts-ignore
-        state.order[existingOrderIndex] = { ...existingOrder, ...newOrder };
+        existingOrder.totalValue = Object.values(
+          existingOrder.items as IOrderItem[]
+        ).reduce((acc, objeto) => {
+          return acc + objeto.subTotal;
+        }, 0);
       } else {
         // Pedido não existe, crie um novo
-        newOrder.items.push(payload);
-        console.log(parseFloat(payload.subTotal));
-        newOrder.totalValue += parseFloat(payload.subTotal);
-        const createOrder = [...state.order, newOrder];
-        state.order = createOrder as never;
+        const newOrder = {
+          id: v4(),
+          client: {
+            id: state.auth.user.id,
+            name: state.auth.user.name,
+          },
+          dateOfIssue: new Date().toISOString(),
+          totalValue: parseFloat(payload.subTotal),
+          items: [payload],
+        };
+
+        ordersSetCopy.push(newOrder);
       }
+
+      console.log(ordersSetCopy);
+      state.order = ordersSetCopy as never[];
     },
     updateUser(state, updated) {
       const productIndex = state.users.findIndex(
