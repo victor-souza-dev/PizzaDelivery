@@ -1,22 +1,26 @@
 <script lang="ts">
+import { IOrder } from "@/Interfaces/IOrder";
 import CartItemComponentVue from "@/components/CartItem/CartItemComponent.vue";
 import { paths } from "@/controllers/paths";
-import { defineComponent, ref } from "vue";
+import store from "@/store";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   components: CartItemComponentVue,
   setup() {
-    const countItem = ref(0);
+    const orders: IOrder = store.getters.getOrderByUser;
 
-    return { countItem };
+    return { orders };
   },
   methods: {
-    addItem() {
-      this.countItem++;
+    addItem(item: any, index: number) {
+      item.quantity = 1;
+      store.commit("setOrders", item);
     },
-    substractItem() {
-      if (this.countItem > 0) {
-        this.countItem--;
+    substractItem(item: any, index: number) {
+      if (this.orders.items[index].quantity > 0) {
+        item.quantity--;
+        store.commit("setOrders", item);
       }
     },
     redirectToOrder() {
@@ -67,21 +71,25 @@ export default defineComponent({
     <section class="cart-items">
       <h3>Pizzas selecionadas</h3>
       <section>
-        <div class="cart-items--item">
+        <div
+          v-for="(item, index) in orders?.items"
+          :key="item.product.toString()"
+          class="cart-items--item"
+        >
           <div class="cart-item">
             <img src="@/assets/pizza.svg" alt="item" />
             <div class="cart-item--configs">
-              <span>Frango</span>
+              <span>{{ item.product.description }}</span>
               <div>
                 <section class="card-counter cart-items--counter">
                   <button
-                    @click="substractItem"
-                    :disabled="countItem === 0 ? true : false"
+                    @click="() => substractItem(item, index)"
+                    :disabled="item.quantity === 0 ? true : false"
                   >
                     -
                   </button>
-                  <span>{{ countItem }}</span>
-                  <button @click="addItem">+</button>
+                  <span>{{ item.quantity }}</span>
+                  <button @click="() => addItem(item, index)">+</button>
                 </section>
                 <button class="cart-items--removeButton">
                   <img src="@/assets/delete.svg" alt="remove icon" />REMOVER
@@ -89,21 +97,21 @@ export default defineComponent({
               </div>
             </div>
           </div>
-          <p>R$ 9,90</p>
+          <p>R$ {{ item.value }}</p>
         </div>
         <div class="cart-items--divider" />
         <div class="cart-items--prices">
           <section>
             <span>Total de Itens</span>
-            <p>R$ 29,70</p>
+            <p>R$ {{ orders.totalValue }}</p>
           </section>
           <section>
             <span>Entrega</span>
-            <p>R$ 3,50</p>
+            <p>R$ 3</p>
           </section>
           <section>
             <h4>Total</h4>
-            <h4>R$ 33,20</h4>
+            <h4>R$ {{ orders.totalValue + 3 }}</h4>
           </section>
         </div>
         <button class="cart-items--submit" @click="redirectToOrder">

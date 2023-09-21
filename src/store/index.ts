@@ -30,6 +30,19 @@ export default createStore({
       return state.users.find((user: IUser) => user.id === id);
     },
     isAuthenticated: (state) => state.auth.isAuthenticated,
+    getOrderByUser: (state) => {
+      const deserializedState: IOrder[] = JSON.parse(
+        JSON.stringify(state.order)
+      );
+
+      return deserializedState
+        .filter((order) => order.client.id === state.auth.user.id)
+        .sort((a, b) => {
+          const dateA = new Date(a.dateOfIssue).getTime();
+          const dateB = new Date(b.dateOfIssue).getTime();
+          return dateA - dateB;
+        })[0];
+    },
   },
   mutations: {
     toggleModal(state, payload) {
@@ -87,8 +100,8 @@ export default createStore({
         ordersSetCopy.push(newOrder);
       }
 
-      console.log(ordersSetCopy);
       state.order = ordersSetCopy as never[];
+      sessionStorage.setItem("orders", JSON.stringify(ordersSetCopy));
     },
     updateUser(state, updated) {
       const productIndex = state.users.findIndex(
@@ -128,7 +141,7 @@ export default createStore({
       state.auth.user = defaultUser;
       state.auth.isAuthenticated = false;
       sessionStorage.removeItem("isAuthenticated");
-      sessionStorage.removeItem("user");
+      sessionStorage.clear();
     },
     initialize(state) {
       const isAuthenticated = sessionStorage.getItem("isAuthenticated");
@@ -139,6 +152,9 @@ export default createStore({
       const user = sessionStorage.getItem("user");
       if (user !== null) {
         state.auth.user = JSON.parse(user);
+
+        const orders = sessionStorage.getItem("orders");
+        if (orders !== null) state.order = JSON.parse(orders) as never[];
       }
     },
   },

@@ -1,9 +1,8 @@
 <script lang="ts">
 import CardItemComponent from "@/components/CardItem/CardItemComponent.vue";
 import PresentationLayout from "@/layouts/PresentationLayout.vue";
-import { defineComponent, onMounted, ref } from "vue";
 import { productsGetAll } from "@/queries/Products/productsGetAll";
-import store from "@/store";
+import { defineComponent, onMounted, ref } from "vue";
 
 export default defineComponent({
   components: {

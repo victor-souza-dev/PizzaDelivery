@@ -11,9 +11,12 @@ export default defineComponent({
     product: Object as () => IProduct,
   },
   setup(props) {
+    const { isAuthenticated: isAuth } = store.state.auth;
     const countItem = ref(0);
 
     function insertToCart() {
+      if (!isAuth) return alert("Unhautorized access");
+
       if (props.product && countItem.value > 0) {
         store.commit("setOrders", {
           id: v4(),
