@@ -35,6 +35,10 @@ export default createStore({
         JSON.stringify(state.order)
       );
 
+      if (deserializedState.length === 0) {
+        return undefined;
+      }
+
       return deserializedState
         .filter((order) => order.client.id === state.auth.user.id)
         .sort((a, b) => {
@@ -102,6 +106,90 @@ export default createStore({
 
       state.order = ordersSetCopy as never[];
       sessionStorage.setItem("orders", JSON.stringify(ordersSetCopy));
+    },
+    addItemOrder(state, { index, id }) {
+      const deserializedState: IOrder[] = JSON.parse(
+        JSON.stringify(state.order)
+      );
+
+      const filteredState = deserializedState.filter(
+        (order: IOrder) => order.id === id
+      )[0];
+
+      const ordersSetCopy: IOrder = { ...filteredState };
+      ordersSetCopy.items[index].quantity++;
+      ordersSetCopy.items[index].subTotal =
+        ordersSetCopy.items[index].quantity * ordersSetCopy.items[index].value;
+
+      ordersSetCopy.totalValue = Object.values(
+        ordersSetCopy.items as IOrderItem[]
+      ).reduce((acc, objeto) => {
+        return acc + objeto.subTotal;
+      }, 0);
+
+      deserializedState[0] = ordersSetCopy;
+
+      state.order = deserializedState as never[];
+      sessionStorage.setItem("orders", JSON.stringify(deserializedState));
+    },
+    substractItemOrder(state, { index, id }) {
+      const deserializedState: IOrder[] = JSON.parse(
+        JSON.stringify(state.order)
+      );
+
+      const filteredState = deserializedState.filter(
+        (order: IOrder) => order.id === id
+      )[0];
+
+      const ordersSetCopy: IOrder = { ...filteredState };
+      ordersSetCopy.items[index].quantity--;
+      ordersSetCopy.items[index].subTotal =
+        ordersSetCopy.items[index].quantity * ordersSetCopy.items[index].value;
+
+      ordersSetCopy.totalValue = Object.values(
+        ordersSetCopy.items as IOrderItem[]
+      ).reduce((acc, objeto) => {
+        return acc + objeto.subTotal;
+      }, 0);
+
+      deserializedState[0] = ordersSetCopy;
+
+      state.order = deserializedState as never[];
+      sessionStorage.setItem("orders", JSON.stringify(deserializedState));
+    },
+    removeItemOrder(state, { index, id }) {
+      const deserializedState: IOrder[] = JSON.parse(
+        JSON.stringify(state.order)
+      );
+
+      const filteredState = deserializedState.filter(
+        (order: IOrder) => order.id === id
+      )[0];
+
+      const ordersSetCopy: IOrder = { ...filteredState };
+      ordersSetCopy.items = ordersSetCopy.items.filter((_, i) => i !== index);
+      ordersSetCopy.items.map((item) => {
+        item.subTotal = item.quantity * item.value;
+      });
+
+      ordersSetCopy.totalValue = Object.values(
+        ordersSetCopy.items as IOrderItem[]
+      ).reduce((acc, objeto) => {
+        return acc + objeto.subTotal;
+      }, 0);
+
+      deserializedState[0] = ordersSetCopy;
+
+      if (ordersSetCopy.items.length > 0) {
+        state.order = deserializedState as never[];
+        return sessionStorage.setItem(
+          "orders",
+          JSON.stringify(deserializedState)
+        );
+      }
+
+      state.order = [];
+      sessionStorage.removeItem("orders");
     },
     updateUser(state, updated) {
       const productIndex = state.users.findIndex(

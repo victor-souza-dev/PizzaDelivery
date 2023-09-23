@@ -1,4 +1,5 @@
 import { authGuard } from "@/guards/authGuard";
+import { cartGuard } from "@/guards/cartGuard";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 const routes: Array<RouteRecordRaw> = [
@@ -11,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/cart",
     name: "CartView",
     component: () => import("../views/CartView.vue"),
-    beforeEnter: authGuard,
+    beforeEnter: [authGuard, cartGuard],
   },
   {
     path: "/success",
